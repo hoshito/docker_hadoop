@@ -1,5 +1,7 @@
 # apache-impala-3.4.1のビルド
 
+2022/08/09 20:30頃から実施したビルドの内容。
+
 ## ビルド手順
 
 ### 参考ページ
@@ -12,10 +14,18 @@
 
 ```
 $ docker run --privileged -it [Docker Image Name] /bin/bash
-$ apt-get update
-$ apt-get install sudo
-$ adduser --disabled-password --gecos '' impdev
-$ echo 'impdev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# apt-get update
+# apt-get install sudo
+# adduser --disabled-password --gecos '' impdev
+# echo 'impdev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+# cp apache-impala-3.4.1.tar.gz /home/impdev/ 
+# su - impdev
+
+$ tar -xzf apache-impala-3.4.1.tar.gz
+$ cd apache-impala-3.4.1
+$ export IMPALA_HOME=`pwd`
+$ ./bin/bootstrap_development.sh
 ```
 
 結果はエラー。詳細はbuild_fail.logを参照
@@ -28,7 +38,7 @@ $ echo 'impdev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 > Is it maven Yes bug？ So I looked at what I used maven edition , It's really different . The environment in question is apache-maven-3.6.1, The environment that can compile normally is apache-maven-3.6.2. 
 
-mavenのバグで古いバージョンだと正常にビルドできない可能性がある
+mavenのバグで古いバージョンだと正常にビルドできない可能性がある。
 
 ## その他の懸念
 
