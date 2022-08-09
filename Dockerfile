@@ -64,6 +64,10 @@ RUN cp $HADOOP_HOME/share/hadoop/hdfs/lib/guava-27.0-jre.jar $HIVE_HOME/lib/
 RUN wget https://dlcdn.apache.org/impala/3.4.1/apache-impala-3.4.1.tar.gz
 RUN tar -zxf apache-impala-3.4.1.tar.gz
 
+RUN apt install -y lsb-release
+COPY ./bootstrap_system.sh /root/work/apache-impala-3.4.1/./bin/bootstrap_system.sh
+
+
 COPY ./init.sh /root/work/init.sh
 CMD service ssh start && /bin/bash
 
