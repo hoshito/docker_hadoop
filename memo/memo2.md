@@ -30,8 +30,8 @@ git clone https://git-wip-us.apache.org/repos/asf/impala.git ~/Impala
 cd ~/Impala
 git checkout 3.4.1
 export IMPALA_HOME=`pwd`
-IMPALA_HOME/bin/bootstrap_system.sh
-source IMPALA_HOME/bin/impala-config.sh
+$IMPALA_HOME/bin/bootstrap_system.sh
+source $IMPALA_HOME/bin/impala-config.sh
 exit
 ```
 
@@ -47,9 +47,10 @@ su - impdev
 ```
 cd ~/Impala
 export IMPALA_HOME=`pwd`
-source IMPALA_HOME/bin/impala-config.sh
-IMPALA_HOME/bin/create-test-configuration.sh -create_metastore -create_sentry_policy_db
-IMPALA_HOME/bin/start-impala-cluster.py
+source $IMPALA_HOME/bin/impala-config.sh
+$IMPALA_HOME/bin/create-test-configuration.sh -create_metastore -create_sentry_policy_db
+$IMPALA_HOME/testdata/bin/run-all.sh
+$IMPALA_HOME/bin/start-impala-cluster.py
 ```
 
 ### host machine
