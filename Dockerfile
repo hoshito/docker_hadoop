@@ -1,13 +1,8 @@
-FROM ubuntu:xenial
+#FROM ubuntu:xenial
+FROM ubuntu_impala3.4.1
 
 RUN apt update
-RUN apt install -y wget
-
-# postgre
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt xenial-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-RUN apt update
-RUN apt install -y openjdk-8-jdk ssh vim sudo postgresql 
+RUN apt install -y openjdk-8-jdk ssh vim sudo postgresql wget
 
 RUN mkdir /root/work
 WORKDIR /root/work
@@ -25,14 +20,25 @@ ENV HDFS_DATANODE_USER="root"
 ENV HDFS_SECONDARYNAMENODE_USER="root"
 ENV YARN_RESOURCEMANAGER_USER="root"
 ENV YARN_NODEMANAGER_USER="root"
-ENV HADOOP_HOME="/opt/hadoop-3.2.4"
-ENV HIVE_HOME="/opt/apache-hive-3.1.3-bin"
-ENV TEZ_HOME="/opt/apache-tez-0.9.2-bin"
+ENV HADOOP_HOME="/opt/hadoop"
+ENV HIVE_HOME="/opt/hive"
+ENV TEZ_HOME="/opt/tez"
 ENV TEZ_CONF_DIR="${TEZ_HOME}/conf"
 ENV TEZ_JARS="${TEZ_HOME}/*:${TEZ_HOME}/lib/*"
 ENV HADOOP_CLASSPATH="${TEZ_CONF_DIR}:${TEZ_JARS}/*:${TEZ_JARS}/lib/*:${HADOOP_CLASSPATH}"
 ENV CLASSPATH="$CLASSPATH:${TEZ_CONF_DIR}:${TEZ_JARS}/*:${TEZ_JARS}/lib/*"
-ENV PATH="$PATH:${HADOOP_HOME}/sbin:${HADOOP_HOME}/bin:${HIVE_HOME}/bin"
+ENV IP="localhost"
+ENV CLUSTER_NAME="localhost"
+ENV HADOOP_COMMON_HOME="${HADOOP_HOME}"
+ENV HADOOP_CONF_DIR="${HADOOP_HOME}/etc/hadoop"
+ENV HADOOP_CONF_DIR_dfs_namenode_name_dir="file:///var/lib/hadoop-hdfs/cache/hdfs/dfs/name"
+ENV HADOOP_HDFS_HOME="${HADOOP_HOME}"
+ENV HADOOP_MAPRED_HOME="${HADOOP_HOME}"
+ENV HADOOP_VERSION="3.2.4"
+ENV IMPALA_HOME="/opt/impala"
+ENV THRIFT_HOME="${IMPALA_HOME}/toolchain/thrift-0.9.3-p7"
+ENV PATH="$PATH:${HADOOP_HOME}/sbin:${HADOOP_HOME}/bin:${HIVE_HOME}/bin:/opt/impala/bin:/opt/impala/shell"
+ENV LD_LIBRARY_PATH="/opt/impala/lib:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/:/opt/impala/lib/plugins"
 
 # hadoop
 RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.2.4/hadoop-3.2.4.tar.gz
@@ -61,13 +67,15 @@ COPY ./tez-site.xml $TEZ_HOME/conf/tez-site.xml
 RUN rm $HIVE_HOME/lib/guava-*
 RUN cp $HADOOP_HOME/share/hadoop/hdfs/lib/guava-27.0-jre.jar $HIVE_HOME/lib/
 
-RUN wget https://dlcdn.apache.org/impala/3.4.1/apache-impala-3.4.1.tar.gz
-RUN tar -zxf apache-impala-3.4.1.tar.gz
-
-RUN apt install -y lsb-release
-COPY ./bootstrap_system.sh /root/work/apache-impala-3.4.1/./bin/bootstrap_system.sh
-
+# impala
+RUN chown -R root:root /home/impdev/Impala
+RUN ln -s /home/impdev/Impala $IMPALA_HOME
+RUN mkdir -p ${IMPALA_HOME}/logs
 
 COPY ./init.sh /root/work/init.sh
-CMD service ssh start && /bin/bash
+CMD service ssh start && \
+pg_ctlcluster 9.5 main start && \
+start-dfs.sh && \
+start-yarn.sh && \
+/bin/bash
 
