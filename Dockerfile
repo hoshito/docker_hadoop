@@ -72,7 +72,7 @@ RUN chown -R root:root /home/impdev/Impala
 RUN ln -s /home/impdev/Impala $IMPALA_HOME
 RUN mkdir -p ${IMPALA_HOME}/logs
 
-COPY ./init.sh /root/work/init.sh
+COPY ./init.txt /root/work/init.txt
 CMD service ssh start && \
 pg_ctlcluster 9.5 main start && \
 start-dfs.sh && \
