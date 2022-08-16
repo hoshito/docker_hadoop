@@ -41,8 +41,7 @@ ENV PATH="$PATH:${HADOOP_HOME}/sbin:${HADOOP_HOME}/bin:${HIVE_HOME}/bin:/opt/imp
 ENV LD_LIBRARY_PATH="/opt/impala/lib:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/:/opt/impala/lib/plugins"
 
 # hadoop
-RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.2.4/hadoop-3.2.4.tar.gz
-RUN tar -zxf hadoop-3.2.4.tar.gz
+RUN wget -O - https://dlcdn.apache.org/hadoop/common/hadoop-3.2.4/hadoop-3.2.4.tar.gz | tar zxf -
 RUN ln -s /root/work/hadoop-3.2.4 $HADOOP_HOME
 COPY ./hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
 COPY ./core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
@@ -52,14 +51,12 @@ COPY ./hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 RUN hdfs namenode -format
 
 # hive
-RUN wget https://dlcdn.apache.org/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz
-RUN tar -zxf apache-hive-3.1.3-bin.tar.gz
+RUN wget -O - https://dlcdn.apache.org/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz | tar zxf -
 RUN ln -s /root/work/apache-hive-3.1.3-bin $HIVE_HOME
 COPY ./hive-site.xml $HIVE_HOME/conf/hive-site.xml
 
 # tez
-RUN wget https://dlcdn.apache.org/tez/0.9.2/apache-tez-0.9.2-bin.tar.gz
-RUN tar -zxf apache-tez-0.9.2-bin.tar.gz
+RUN wget -O - https://dlcdn.apache.org/tez/0.9.2/apache-tez-0.9.2-bin.tar.gz | tar zxf -
 RUN ln -s /root/work/apache-tez-0.9.2-bin $TEZ_HOME
 COPY ./tez-site.xml $TEZ_HOME/conf/tez-site.xml
 
