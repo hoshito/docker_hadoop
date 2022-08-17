@@ -6,8 +6,6 @@ hdfs dfs -chmod g+w /tmp
 hdfs dfs -chmod g+w /user/hive/warehouse
 hdfs dfs -put $TEZ_HOME/share/tez.tar.gz /apps/tez
 
-sudo -u postgres psql -c "CREATE USER hive WITH PASSWORD 'hive';"
-sudo -u postgres createdb -O hive hive
 $HIVE_HOME/bin/schematool -dbType postgres -initSchema
 hive --service metastore &
 

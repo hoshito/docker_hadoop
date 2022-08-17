@@ -2,7 +2,7 @@
 FROM ubuntu_impala3.4.1
 
 RUN apt update
-RUN apt install -y openjdk-8-jdk ssh vim sudo postgresql wget
+RUN apt install -y openjdk-8-jdk ssh vim sudo wget
 
 RUN mkdir /root/work
 WORKDIR /root/work
@@ -65,13 +65,11 @@ RUN rm $HIVE_HOME/lib/guava-*
 RUN cp $HADOOP_HOME/share/hadoop/hdfs/lib/guava-27.0-jre.jar $HIVE_HOME/lib/
 
 # impala
-RUN chown -R root:root /home/impdev/Impala
 RUN ln -s /home/impdev/Impala $IMPALA_HOME
 RUN mkdir -p ${IMPALA_HOME}/logs
 
 COPY ./init.txt /root/work/init.txt
 CMD service ssh start && \
-pg_ctlcluster 9.5 main start && \
 start-dfs.sh && \
 start-yarn.sh && \
 /bin/bash

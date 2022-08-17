@@ -1,9 +1,19 @@
 version: "3"
 
 services:
-  my-container:
+  main-container:
     build:
       context: .
       dockerfile: ./Dockerfile
     tty: true
+    hostname: main-container
+  postgres95:
+    image: postgres:9.5
+    environment:
+      - POSTGRES_USER=hive
+      - POSTGRES_PASSWORD=hive
+      - POSTGRES_DB=hive
+    ports:
+      - 5432:5432
+    hostname: postgres95
 
