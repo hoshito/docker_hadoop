@@ -82,8 +82,8 @@ impalaをビルドした後は以下の手順でDockerを起動。
 ### host machine
 
 ```
-docker build -t hadoop_dev ./
-docker run -it --name hadoop_dev hadoop_dev:latest /bin/bash
+$ docker-compose up --build -d
+$ docker-compose exec main-container bash
 ```
 Dockerのイメージサイズは36.14GBになる。
 
