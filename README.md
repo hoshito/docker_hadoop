@@ -39,6 +39,7 @@ git checkout 3.4.1
 export IMPALA_HOME=`pwd`
 $IMPALA_HOME/bin/bootstrap_system.sh
 source $IMPALA_HOME/bin/impala-config.sh
+$IMPALA_HOME/buildall.sh -noclean -notests
 exit
 ```
 
@@ -83,8 +84,8 @@ impalaをビルドした後は以下の手順でDockerを起動。
 ### host machine
 
 ```
-docker build -t hadoop_dev ./
-docker run -it --name hadoop_dev hadoop_dev:latest /bin/bash
+$ docker-compose up --build -d
+$ docker-compose exec main-container bash
 ```
 Dockerのイメージサイズは36.14GBになる。
 
