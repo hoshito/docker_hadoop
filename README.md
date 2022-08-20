@@ -46,6 +46,8 @@ exit
 
 ```
 service ssh start
+ln -s /home/impdev/Impala /opt/impala
+mkdir -p /opt/impala/logs
 su - impdev
 ```
 

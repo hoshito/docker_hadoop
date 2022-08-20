@@ -1,0 +1,15 @@
+FROM ubuntu_impala3.4.1
+
+RUN mkdir -p /root/work
+RUN mkdir -p /opt/impala/conf
+WORKDIR /root/work
+
+COPY ./hdfs-site.xml /opt/impala/conf
+COPY ./core-site.xml /opt/impala/conf
+COPY ./mapred-site.xml /opt/impala/conf
+COPY ./yarn-site.xml /opt/impala/conf
+COPY ./hive-site.xml /opt/impala/conf
+COPY ./tez-site.xml /opt/impala/conf
+
+CMD /bin/bash
+

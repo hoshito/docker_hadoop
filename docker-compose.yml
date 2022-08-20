@@ -5,7 +5,30 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+      args:
+        - JAVA_HOME=$JAVA_HOME
+        - HADOOP_HOME=$HADOOP_HOME
+        - HIVE_HOME=$HIVE_HOME
+        - TEZ_HOME=$TEZ_HOME
     tty: true
+    env_file: .env
+    command: >
+      bash -c "
+        hdfs namenode -format
+        service ssh start
+        start-dfs.sh
+        start-yarn.sh
+        hdfs dfs -mkdir -p /user/root /tmp /user/hive/warehouse /apps/tez
+        hdfs dfs -chmod g+w /tmp /user/hive/warehouse
+        hdfs dfs -put $TEZ_HOME/share/tez.tar.gz /apps/tez
+        $HIVE_HOME/bin/schematool -dbType postgres -initSchema
+        hive --service metastore &
+        source $IMPALA_HOME/bin/set-classpath.sh
+        $IMPALA_HOME/be/build/latest/service/statestored -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=$IP &
+        $IMPALA_HOME/be/build/latest/service/catalogd -log_dir=/opt/impala/logs -catalog_service_host=$IP -state_store_host=$IP &
+        $IMPALA_HOME/be/build/latest/service/impalad -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=$IP -catalog_service_host=$IP -be_port=22000 &
+        bash
+      "
     hostname: main-container
   postgres95:
     image: postgres:9.5
@@ -16,4 +39,58 @@ services:
     ports:
       - 5432:5432
     hostname: postgres95
+  catalogd:
+    build:
+      context: .
+      dockerfile: ./Dockerfile_impala
+      args:
+        - IMPALA_HOME=$IMPALA_HOME
+    image: ubuntu_impala3.4.1
+    tty: true
+    env_file: .env
+    hostname: catalogd
+    command: >
+      bash -c "
+        source $IMPALA_HOME/bin/set-classpath.sh
+        $IMPALA_HOME/be/build/latest/service/catalogd -log_dir=/opt/impala/logs -catalog_service_host=catalogd:26000 -state_store_host=statestored &
+        bash
+      "
+    ports:
+      - 26000:26000
+      - 25020:25020
+  statestored:
+    build:
+      context: .
+      dockerfile: ./Dockerfile_impala
+      args:
+        - IMPALA_HOME=$IMPALA_HOME
+    tty: true
+    env_file: .env
+    hostname: statestored
+    command: >
+      bash -c "
+        source $IMPALA_HOME/bin/set-classpath.sh
+        $IMPALA_HOME/be/build/latest/service/statestored -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored &
+        bash
+      "
+    ports:
+      - 24000:24000
+      - 25010:25010
+  impalad:
+    build:
+      context: .
+      dockerfile: ./Dockerfile_impala
+      args:
+        - IMPALA_HOME=$IMPALA_HOME
+    tty: true
+    env_file: .env
+    hostname: impalad
+    command: >
+      bash -c "
+        source $IMPALA_HOME/bin/set-classpath.sh
+        $IMPALA_HOME/be/build/latest/service/impalad -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored -catalog_service_host=catalogd -be_port=22000 &
+        bash
+      "
+    ports:
+      - 22000:22000
 
