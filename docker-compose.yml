@@ -23,10 +23,6 @@ services:
         hdfs dfs -put $TEZ_HOME/share/tez.tar.gz /apps/tez
         $HIVE_HOME/bin/schematool -dbType postgres -initSchema
         hive --service metastore &
-        source $IMPALA_HOME/bin/set-classpath.sh
-        $IMPALA_HOME/be/build/latest/service/statestored -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=$IP &
-        $IMPALA_HOME/be/build/latest/service/catalogd -log_dir=/opt/impala/logs -catalog_service_host=$IP -state_store_host=$IP &
-        $IMPALA_HOME/be/build/latest/service/impalad -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=$IP -catalog_service_host=$IP -be_port=22000 &
         bash
       "
     hostname: main-container
@@ -36,8 +32,6 @@ services:
       - POSTGRES_USER=hive
       - POSTGRES_PASSWORD=hive
       - POSTGRES_DB=hive
-    ports:
-      - 5432:5432
     hostname: postgres95
   catalogd:
     build:
@@ -49,15 +43,12 @@ services:
     tty: true
     env_file: .env
     hostname: catalogd
+    restart: always
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
-        $IMPALA_HOME/be/build/latest/service/catalogd -log_dir=/opt/impala/logs -catalog_service_host=catalogd:26000 -state_store_host=statestored &
-        bash
+        $IMPALA_HOME/be/build/latest/service/catalogd -log_dir=/opt/impala/logs -catalog_service_host=catalogd:26000 -state_store_host=statestored
       "
-    ports:
-      - 26000:26000
-      - 25020:25020
   statestored:
     build:
       context: .
@@ -66,16 +57,13 @@ services:
         - IMPALA_HOME=$IMPALA_HOME
     tty: true
     env_file: .env
+    restart: always
     hostname: statestored
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
-        $IMPALA_HOME/be/build/latest/service/statestored -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored &
-        bash
+        $IMPALA_HOME/be/build/latest/service/statestored -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored
       "
-    ports:
-      - 24000:24000
-      - 25010:25010
   impalad:
     build:
       context: .
@@ -85,11 +73,11 @@ services:
     tty: true
     env_file: .env
     hostname: impalad
+    restart: always
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
-        $IMPALA_HOME/be/build/latest/service/impalad -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored -catalog_service_host=catalogd -be_port=22000 &
-        bash
+        $IMPALA_HOME/be/build/latest/service/impalad -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored -catalog_service_host=catalogd -be_port=22000
       "
     ports:
       - 22000:22000

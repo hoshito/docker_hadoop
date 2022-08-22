@@ -49,4 +49,8 @@
       and is deprecated in Hive 2 line. It may be removed without further warning.
     </description>
   </property>
+  <property>
+    <name>hive.metastore.uris</name>
+    <value>thrift://main-container:9083</value>
+  </property>
 </configuration>
