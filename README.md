@@ -1,6 +1,6 @@
 # Hadoop動作環境構築
 
-1つのコンテナ上でHadoop関連のシステムを動かす。
+Dockerコンテナ上でHadoop関連のシステムを動かす。
 
 ## エコシステムのバージョン
 
@@ -85,18 +85,11 @@ impalaをビルドした後は以下の手順でDockerを起動。
 
 ```
 $ docker-compose up --build -d
+
+# hadoop, hiveが使えるコンテナ
 $ docker-compose exec main-container bash
-```
-Dockerのイメージサイズは36.14GBになる。
 
-### Docker(user: root)
-
-```
-cat init.txt
-```
-でてきたコマンドを手動でコピペして実行
-
-#### impala-shellの起動
-```
-$IMPALA_HOME/shell/build/impala-shell-3.4.1-RELEASE/impala-shell
+# impalaが使えるコンテナ
+$ docker-compose exec impalad bash
+$ $IMPALA_HOME/shell/build/impala-shell-3.4.1-RELEASE/impala-shell
 ```
