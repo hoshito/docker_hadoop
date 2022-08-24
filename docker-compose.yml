@@ -34,7 +34,7 @@ services:
       - POSTGRES_DB=hive
     hostname: postgres95
   catalogd:
-    build: &impala_build
+    build:
       context: .
       dockerfile: ./Dockerfile_impala
       args:
@@ -47,8 +47,8 @@ services:
         $IMPALA_HOME/be/build/latest/service/catalogd -log_dir=/opt/impala/logs -catalog_service_host=catalogd:26000 -state_store_host=statestored
       "
   statestored:
-    build: *impala_build
-    env_file: .env
+    extends:
+      service: catalogd
     hostname: statestored
     command: >
       bash -c "
@@ -56,8 +56,8 @@ services:
         $IMPALA_HOME/be/build/latest/service/statestored -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored
       "
   impalad:
-    build: *impala_build
-    env_file: .env
+    extends:
+      service: catalogd
     hostname: impalad
     restart: always
     command: >
