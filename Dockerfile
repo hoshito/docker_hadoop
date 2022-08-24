@@ -1,5 +1,4 @@
-#FROM ubuntu:xenial
-FROM ubuntu_impala3.4.1
+FROM ubuntu:16.04
 
 RUN mkdir -p /root/work
 WORKDIR /root/work

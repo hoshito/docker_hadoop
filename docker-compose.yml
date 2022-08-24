@@ -39,11 +39,8 @@ services:
       dockerfile: ./Dockerfile_impala
       args:
         - IMPALA_HOME=$IMPALA_HOME
-    image: ubuntu_impala3.4.1
-    tty: true
     env_file: .env
     hostname: catalogd
-    restart: always
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
@@ -55,9 +52,7 @@ services:
       dockerfile: ./Dockerfile_impala
       args:
         - IMPALA_HOME=$IMPALA_HOME
-    tty: true
     env_file: .env
-    restart: always
     hostname: statestored
     command: >
       bash -c "
@@ -70,10 +65,8 @@ services:
       dockerfile: ./Dockerfile_impala
       args:
         - IMPALA_HOME=$IMPALA_HOME
-    tty: true
     env_file: .env
     hostname: impalad
-    restart: always
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
