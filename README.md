@@ -66,7 +66,7 @@ $IMPALA_HOME/bin/start-impala-cluster.py
 ### host machine
 
 ```
-docker commit ubuntu_impala3.4.1
+docker commit (container ID) ubuntu_impala3.4.1
 ```
 
 ### 参考ページ
