@@ -34,7 +34,7 @@ services:
       - POSTGRES_DB=hive
     hostname: postgres95
   catalogd:
-    build:
+    build: &impala_build
       context: .
       dockerfile: ./Dockerfile_impala
       args:
@@ -47,11 +47,7 @@ services:
         $IMPALA_HOME/be/build/latest/service/catalogd -log_dir=/opt/impala/logs -catalog_service_host=catalogd:26000 -state_store_host=statestored
       "
   statestored:
-    build:
-      context: .
-      dockerfile: ./Dockerfile_impala
-      args:
-        - IMPALA_HOME=$IMPALA_HOME
+    build: *impala_build
     env_file: .env
     hostname: statestored
     command: >
@@ -60,13 +56,10 @@ services:
         $IMPALA_HOME/be/build/latest/service/statestored -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored
       "
   impalad:
-    build:
-      context: .
-      dockerfile: ./Dockerfile_impala
-      args:
-        - IMPALA_HOME=$IMPALA_HOME
+    build: *impala_build
     env_file: .env
     hostname: impalad
+    restart: always
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
