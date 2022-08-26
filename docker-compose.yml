@@ -10,6 +10,7 @@ services:
         - HADOOP_HOME=$HADOOP_HOME
         - HIVE_HOME=$HIVE_HOME
         - TEZ_HOME=$TEZ_HOME
+        - HBASE_HOME=$HBASE_HOME
     tty: true
     env_file: .env
     command: >
@@ -23,6 +24,7 @@ services:
         hdfs dfs -put $TEZ_HOME/share/tez.tar.gz /apps/tez
         $HIVE_HOME/bin/schematool -dbType postgres -initSchema
         hive --service metastore &
+        $HBASE_HOME/bin/start-hbase.sh
         bash
       "
     hostname: main-container
@@ -67,4 +69,3 @@ services:
       "
     ports:
       - 22000:22000
-
