@@ -56,5 +56,6 @@ COPY ./hive-site.xml $HIVE_HOME/conf/hive-site.xml
 COPY ./tez-site.xml $TEZ_HOME/conf/tez-site.xml
 COPY ./hbase-env.sh $HBASE_HOME/conf
 COPY ./hbase-site.xml $HBASE_HOME/conf
+COPY ./spark-env.sh $SPARK_HOME/conf
 
 CMD /bin/bash
