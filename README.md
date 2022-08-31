@@ -13,6 +13,9 @@ Dockerコンテナ上でHadoop関連のシステムを動かす。
 - Livy 0.6.0
 - NiFi 1.16.0
 
+バージョンは
+[Cloudera Runtime 7.1.7 SP1 component versions](https://docs.cloudera.com/cdp-private-cloud-base/7.1.7/runtime-release-notes/topics/rt-pvc-runtime-component-versions-SP1.html) に合わせた。Impalaは現状3.4.1で動作確認をしており3.4.0はこれから確認する予定。
+
 ## apache-impalaのビルド
 
 impalaは自分でビルドする必要がある。Wikiのページ [apache impala 3.4.1ビルド手順](https://github.com/hoshito/docker_hadoop/wiki/apache-impala-3.4.1%E3%83%93%E3%83%AB%E3%83%89%E6%89%8B%E9%A0%86) を参考にすること。
