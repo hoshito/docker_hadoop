@@ -21,8 +21,4 @@
         <name>dfs.replication</name>
         <value>1</value>
     </property>
-    <property>
-      <name>dfs.client.datanode-restart.timeout</name>
-      <value>30</value>
-    </property>
 </configuration>
