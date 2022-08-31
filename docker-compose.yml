@@ -12,6 +12,7 @@ services:
         - TEZ_HOME=$TEZ_HOME
         - HBASE_HOME=$HBASE_HOME
         - USER_HOME=$USER_HOME
+        - SPARK_HOME=$SPARK_HOME
     tty: true
     env_file: .env
     command: >

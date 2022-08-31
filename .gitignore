@@ -1,3 +1,4 @@
 *.tar.gz
+*.tgz
 volume/*
 !volume/.gitkeep
