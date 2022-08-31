@@ -4,10 +4,14 @@ Dockerコンテナ上でHadoop関連のシステムを動かす。
 
 ## エコシステムのバージョン
 
-- Hadoop 3.2.4
+- Hadoop 3.1.4
 - Hive 3.1.3
 - tez 0.9.2
 - Impala 3.4.1
+- HBase 2.2.7
+- Spark 2.4.8
+- Livy 0.6.0
+- NiFi 1.13.2
 
 ## apache-impala-3.4.1ビルド手順
 
