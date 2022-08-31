@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
   openjdk-8-jdk \
   ssh \
   sudo \
+  unzip \
   vim \
   wget \
   && apt-get clean \
@@ -19,8 +20,18 @@ WORKDIR $USER_HOME
 #     wget -O - https://dlcdn.apache.org/tez/0.9.2/apache-tez-0.9.2-bin.tar.gz | tar zxf - && \
 #     wget -O - https://archive.apache.org/dist/hbase/2.2.7/hbase-2.2.7-bin.tar.gz | tar zxf - && \
 #     wget -O - https://archive.apache.org/dist/spark/spark-2.4.8/spark-2.4.8-bin-without-hadoop.tgz | tar zxf -
-COPY ./hadoop-3.1.4.tar.gz ./apache-hive-3.1.3-bin.tar.gz ./apache-tez-0.9.2-bin.tar.gz ./hbase-2.2.7-bin.tar.gz ./spark-2.4.8-bin-without-hadoop.tgz $USER_HOME
-RUN find . \( -name "*.tar.gz" -or -name "*.tgz" \) -exec tar zxf {} \;
+#     wget -O - https://archive.apache.org/dist/incubator/livy/0.6.0-incubating/apache-livy-0.6.0-incubating-bin.zip | unzip -
+COPY hadoop-3.1.4.tar.gz \
+  apache-hive-3.1.3-bin.tar.gz \
+  apache-tez-0.9.2-bin.tar.gz \
+  hbase-2.2.7-bin.tar.gz \
+  spark-2.4.8-bin-without-hadoop.tgz \
+  apache-livy-0.6.0-incubating-bin.zip \
+  $USER_HOME
+RUN find -maxdepth 1 \( -name "*.tar.gz" -or -name "*.tgz" \) -exec tar zxf {} \; && \
+  find -maxdepth 1 -name "*.zip" -exec unzip {} \; && \
+  rm -f *.tar.gz *.tgz *.zip
+
 
 # ssh
 RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
@@ -34,13 +45,15 @@ ARG HIVE_HOME
 ARG TEZ_HOME
 ARG HBASE_HOME
 ARG SPARK_HOME
+ARG LIVY_HOME
 
 # symbolic link
 RUN ln -s $USER_HOME/hadoop-3.1.4 $HADOOP_HOME && \
   ln -s $USER_HOME/apache-hive-3.1.3-bin $HIVE_HOME && \
   ln -s $USER_HOME/apache-tez-0.9.2-bin $TEZ_HOME && \
   ln -s $USER_HOME/hbase-2.2.7 $HBASE_HOME && \
-  ln -s $USER_HOME/spark-2.4.8-bin-without-hadoop $SPARK_HOME
+  ln -s $USER_HOME/spark-2.4.8-bin-without-hadoop $SPARK_HOME && \
+  ln -s $USER_HOME/apache-livy-0.6.0-incubating-bin $LIVY_HOME
 
 # fix guava version conflict
 RUN rm $HIVE_HOME/lib/guava-* && \

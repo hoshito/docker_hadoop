@@ -13,6 +13,7 @@ services:
         - HBASE_HOME=$HBASE_HOME
         - USER_HOME=$USER_HOME
         - SPARK_HOME=$SPARK_HOME
+        - LIVY_HOME=$LIVY_HOME
     tty: true
     env_file: .env
     command: >
@@ -30,6 +31,8 @@ services:
         bash
       "
     hostname: main-container
+    ports:
+      - 8998:8998
   postgres95:
     image: postgres:9.5
     environment:
