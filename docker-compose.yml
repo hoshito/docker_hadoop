@@ -3,7 +3,7 @@ version: "3"
 services:
   main-container:
     build:
-      context: .
+      context: ./main-container
       dockerfile: ./Dockerfile
       args:
         - JAVA_HOME=$JAVA_HOME
@@ -38,8 +38,8 @@ services:
     hostname: postgres95
   catalogd:
     build:
-      context: .
-      dockerfile: ./Dockerfile_impala
+      context: ./impala
+      dockerfile: ./Dockerfile
       args:
         - IMPALA_HOME=$IMPALA_HOME
     env_file: .env
