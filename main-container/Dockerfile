@@ -55,4 +55,7 @@ COPY tez-site.xml $TEZ_HOME/conf/
 COPY hbase-env.sh hbase-site.xml $HBASE_HOME/conf/
 COPY spark-env.sh $SPARK_HOME/conf/
 
-CMD /bin/bash
+COPY entrypoint.sh $USER_HOME
+RUN touch $USER_HOME/.init_run_docker
+
+ENTRYPOINT bash ./entrypoint.sh

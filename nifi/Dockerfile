@@ -19,6 +19,6 @@ ARG USER_HOME
 ARG NIFI_HOME
 RUN ln -s $USER_HOME/nifi-1.16.0 $NIFI_HOME
 
-COPY hive-site.xml init.sh $USER_HOME
+COPY hive-site.xml entrypoint.sh $USER_HOME
 
-CMD /bin/bash
+ENTRYPOINT bash ./entrypoint.sh

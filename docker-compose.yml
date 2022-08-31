@@ -16,21 +16,6 @@ services:
         - LIVY_HOME=$LIVY_HOME
     tty: true
     env_file: .env
-    command: >
-      bash -c "
-        hdfs namenode -format
-        service ssh start
-        start-dfs.sh
-        start-yarn.sh
-        hdfs dfs -mkdir -p /user/root /tmp /user/hive/warehouse /apps/tez
-        hdfs dfs -chmod g+w /tmp /user/hive/warehouse
-        hdfs dfs -put $TEZ_HOME/share/tez.tar.gz /apps/tez
-        $HIVE_HOME/bin/schematool -dbType postgres -initSchema
-        hive --service metastore &
-        $HBASE_HOME/bin/start-hbase.sh
-        $LIVY_HOME/bin/livy-server start
-        bash
-      "
     hostname: main-container
     ports:
       - 8998:8998
