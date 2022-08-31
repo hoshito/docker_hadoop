@@ -84,9 +84,10 @@ services:
         - NIFI_HOME=$NIFI_HOME
     environment:
       - NIFI_HOST=nifi
+      - NIFI_WEB_PROXY_HOST=localhost:8080
     tty: true
     env_file: .env
     volumes:
       - ./volume/nifi:$NIFI_HOME
     ports:
-      - 8080:8080
+      - 8080:8443

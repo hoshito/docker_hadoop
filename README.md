@@ -4,14 +4,14 @@ Dockerコンテナ上でHadoop関連のシステムを動かす。
 
 ## エコシステムのバージョン
 
-- Hadoop 3.1.4
+- Hadoop 3.1.1
 - Hive 3.1.3
-- tez 0.9.2
+- tez 0.9.1
 - Impala 3.4.1
-- HBase 2.2.7
-- Spark 2.4.8
+- HBase 2.2.3
+- Spark 2.4.7
 - Livy 0.6.0
-- NiFi 1.13.2
+- NiFi 1.16.0
 
 ## apache-impala-3.4.1ビルド手順
 
@@ -97,3 +97,13 @@ $ docker-compose exec main-container bash
 $ docker-compose exec impalad bash
 $ $IMPALA_HOME/shell/build/impala-shell-3.4.1-RELEASE/impala-shell
 ```
+
+## その他
+
+### NiFiのパスワード変更
+
+```
+root@nifi:~/work/nifi-1.16.0# ./bin/nifi.sh set-single-user-credentials <username> <password>
+```
+
+変更後はNiFiサーバの再起動が必要。
