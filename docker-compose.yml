@@ -2,6 +2,7 @@ version: "3"
 
 services:
   main-container:
+    hostname: main-container
     build:
       context: ./main-container
       dockerfile: ./Dockerfile
@@ -16,50 +17,47 @@ services:
         - LIVY_HOME=$LIVY_HOME
     tty: true
     env_file: .env
-    hostname: main-container
     ports:
-      - 8998:8998
+      - 8998:8998 # Livy UI
   postgres95:
+    hostname: postgres95
     image: postgres:9.5
     environment:
       - POSTGRES_USER=hive
       - POSTGRES_PASSWORD=hive
       - POSTGRES_DB=hive
-    hostname: postgres95
   catalogd:
+    hostname: catalogd
     build:
       context: ./impala
       dockerfile: ./Dockerfile
       args:
         - IMPALA_HOME=$IMPALA_HOME
     env_file: .env
-    hostname: catalogd
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
         $IMPALA_HOME/be/build/latest/service/catalogd -log_dir=/opt/impala/logs -catalog_service_host=catalogd:26000 -state_store_host=statestored
       "
   statestored:
+    hostname: statestored
     extends:
       service: catalogd
-    hostname: statestored
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
         $IMPALA_HOME/be/build/latest/service/statestored -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored
       "
   impalad:
+    hostname: impalad
     extends:
       service: catalogd
-    hostname: impalad
-    restart: always
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
         $IMPALA_HOME/be/build/latest/service/impalad -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored -catalog_service_host=catalogd -be_port=22000
       "
-    ports:
-      - 22000:22000
+    restart: always
   nifi:
     hostname: nifi
     build:
@@ -68,12 +66,11 @@ services:
       args:
         - USER_HOME=$USER_HOME
         - NIFI_HOME=$NIFI_HOME
+    env_file: .env
     environment:
       - NIFI_HOST=nifi
       - NIFI_WEB_PROXY_HOST=localhost:8080
-    tty: true
-    env_file: .env
-    volumes:
-      - ./volume/nifi:$NIFI_HOME
     ports:
       - 8080:8443
+    volumes:
+      - ./volume/nifi:$NIFI_HOME
