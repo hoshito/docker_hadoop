@@ -70,3 +70,19 @@ services:
       "
     ports:
       - 22000:22000
+  nifi:
+    hostname: nifi
+    build:
+      context: ./nifi
+      dockerfile: ./Dockerfile
+      args:
+        - USER_HOME=$USER_HOME
+        - NIFI_HOME=$NIFI_HOME
+    environment:
+      - NIFI_HOST=nifi
+    tty: true
+    env_file: .env
+    volumes:
+      - ./volume/nifi:$NIFI_HOME
+    ports:
+      - 8080:8080
