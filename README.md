@@ -13,97 +13,84 @@ Dockerコンテナ上でHadoop関連のシステムを動かす。
 - Livy 0.6.0
 - NiFi 1.16.0
 
-## apache-impala-3.4.1ビルド手順
+## apache-impalaのビルド
 
-impalaは自分でビルドする必要がある。
-
-### host machine
-
-```
-docker run --cap-add SYS_TIME --interactive --tty --name impala-dev -p 25000:25000 -p 25010:25010 -p 25020:25020 ubuntu:16.04 bash
-```
-
-### Docker(user: root)
-
-```
-apt-get update
-apt-get install sudo
-adduser --disabled-password --gecos '' impdev
-echo 'impdev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-su - impdev
-```
-
-### Docker(user: impdev)
-
-```
-sudo apt-get --yes install git
-git clone https://git-wip-us.apache.org/repos/asf/impala.git ~/Impala
-cd ~/Impala
-git checkout 3.4.1
-export IMPALA_HOME=`pwd`
-$IMPALA_HOME/bin/bootstrap_system.sh
-source $IMPALA_HOME/bin/impala-config.sh
-$IMPALA_HOME/buildall.sh -noclean -notests
-exit
-```
-
-### Docker(user: root)
-
-```
-service ssh start
-ln -s /home/impdev/Impala /opt/impala
-mkdir -p /opt/impala/logs
-su - impdev
-```
-
-### Docker(user: impdev)
-
-```
-cd ~/Impala
-export IMPALA_HOME=`pwd`
-source $IMPALA_HOME/bin/impala-config.sh
-$IMPALA_HOME/bin/create-test-configuration.sh -create_metastore -create_sentry_policy_db
-$IMPALA_HOME/testdata/bin/run-all.sh
-$IMPALA_HOME/bin/start-impala-cluster.py
-```
-
-### host machine
-
-```
-docker commit (container ID) ubuntu_impala3.4.1
-```
-
-### 参考ページ
-https://cwiki.apache.org/confluence/display/IMPALA/Impala+Development+Environment+inside+Docker
-
-ページ内の"or"で区切られているコマンドのうちbootstrap_development.shの方を実行すると
-検証用のテストデータをダウンロードするのでコンテナのサイズが大きく上がるうえにテストが途中で失敗してしまう
-
-- 18.29GB → 55.41GBにコンテナのサイズが上がる
+impalaは自分でビルドする必要がある。Wikiのページ [apache impala 3.4.1ビルド手順](https://github.com/hoshito/docker_hadoop/wiki/apache-impala-3.4.1%E3%83%93%E3%83%AB%E3%83%89%E6%89%8B%E9%A0%86) を参考にすること。
 
 ## Docker起動
-
-impalaをビルドした後は以下の手順でDockerを起動。
-
-### host machine
 
 ```
 $ docker-compose up --build -d
 
-# hadoop, hiveが使えるコンテナ
-$ docker-compose exec main-container bash
-
-# impalaが使えるコンテナ
-$ docker-compose exec impalad bash
-$ $IMPALA_HOME/shell/build/impala-shell-3.4.1-RELEASE/impala-shell
+# コンテナにログイン
+$ docker-compose exec (main-container or impalad or nifi) bash
 ```
 
-## その他
+## エコシステムの実行
 
-### NiFiのパスワード変更
+PATHが通っているためほとんどそのままコマンドを打てば良い。
+
+### main-container
+
+#### Hive
 
 ```
-root@nifi:~/work/nifi-1.16.0# ./bin/nifi.sh set-single-user-credentials <username> <password>
+$ hive
+hive> (hive command)
 ```
+
+#### HBase
+
+```
+$ hbase shell
+hbase(main):001:0> (hbase command)
+```
+
+#### Spark
+
+```
+$ spark-shell
+scala>
+```
+
+サンプルプログラムの実行
+```
+$SPARK_HOME/bin/run-example SparkPi 10
+```
+
+#### Livy
+
+host machineで http://localhost:8998 にアクセスするとUIが見られる。
+
+Livyサーバの実行方法は以下。
+```
+$ $LIVY_HOME/bin/livy-server start
+```
+
+APIは https://livy.apache.org/docs/latest/rest-api.html を参考にすること。
+
+### nifi
+
+host machineで http://localhost:8080 にアクセスするとUIが見られる。
+
+初期ユーザとパスワードはNiFiサーバ実行時に $NIFI_HOME/logs/nifi-app.log に表示される（"Generated"で検索）
+
+#### NiFiのパスワード変更
 
 変更後はNiFiサーバの再起動が必要。
+```
+$ $NIFI_HOME/bin/nifi.sh set-single-user-credentials <username> <password>
+```
+
+### impala
+
+#### impala-shell
+
+impaladを実行しているコンテナにログインして以下を実行。
+
+```
+$IMPALA_HOME/shell/build/impala-shell-3.4.1-RELEASE/impala-shell
+[impalad:21000] default> (impala command)
+```
+
+hiveのmetastoreを利用しているためhiveで格納したデータも扱える。データが無いように見える場合はimpala-shell内で `INVALIDATE METADATA` を実行すること。

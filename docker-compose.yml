@@ -28,6 +28,7 @@ services:
         $HIVE_HOME/bin/schematool -dbType postgres -initSchema
         hive --service metastore &
         $HBASE_HOME/bin/start-hbase.sh
+        $LIVY_HOME/bin/livy-server start
         bash
       "
     hostname: main-container

@@ -21,4 +21,9 @@
         <name>dfs.replication</name>
         <value>1</value>
     </property>
+    <!-- use hive on tez -->
+    <property>
+      <name>dfs.client.datanode-restart.timeout</name>
+      <value>30</value>
+    </property>
 </configuration>
