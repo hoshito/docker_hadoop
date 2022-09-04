@@ -1,4 +1,4 @@
-FROM ubuntu_impala3.4.1
+FROM ubuntu_impala4.0.0
 
 ARG IMPALA_HOME
 RUN ln -s /home/impdev/Impala $IMPALA_HOME

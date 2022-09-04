@@ -14,12 +14,12 @@ RUN mkdir -p $USER_HOME
 WORKDIR $USER_HOME
 
 # download
-# RUN wget -O - https://archive.apache.org/dist/hadoop/core/hadoop-3.1.1/hadoop-3.1.1.tar.gz | tar zxf - && \
-#     wget -O - https://archive.apache.org/dist/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz | tar zxf - && \
-#     wget -O - https://archive.apache.org/dist/tez/0.9.1/apache-tez-0.9.1-bin.tar.gz | tar zxf - && \
-#     wget -O - https://archive.apache.org/dist/hbase/2.2.3/hbase-2.2.3-bin.tar.gz | tar zxf - && \
-#     wget -O - https://archive.apache.org/dist/spark/spark-2.4.7/spark-2.4.7-bin-without-hadoop.tgz | tar zxf -
-#     wget -O - https://archive.apache.org/dist/incubator/livy/0.6.0-incubating/apache-livy-0.6.0-incubating-bin.zip | unzip -
+#RUN wget -O - https://archive.apache.org/dist/hadoop/core/hadoop-3.1.1/hadoop-3.1.1.tar.gz | tar zxf - && \
+#  wget -O - https://archive.apache.org/dist/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz | tar zxf - && \
+#  wget -O - https://archive.apache.org/dist/tez/0.9.1/apache-tez-0.9.1-bin.tar.gz | tar zxf - && \
+#  wget -O - https://archive.apache.org/dist/hbase/2.4.6/hbase-2.4.6-bin.tar.gz | tar zxf - && \
+#  wget -O - https://archive.apache.org/dist/spark/spark-2.4.8/spark-2.4.8-bin-without-hadoop.tgz | tar zxf - && \
+#  wget -O - https://archive.apache.org/dist/incubator/livy/0.6.0-incubating/apache-livy-0.6.0-incubating-bin.zip | unzip -
 COPY *.tar.gz *.tgz *.zip $USER_HOME
 RUN find -maxdepth 1 \( -name "*.tar.gz" -or -name "*.tgz" \) -exec tar zxf {} \; && \
   find -maxdepth 1 -name "*.zip" -exec unzip {} \; && \
@@ -44,8 +44,8 @@ ARG LIVY_HOME
 RUN ln -s $USER_HOME/hadoop-3.1.1 $HADOOP_HOME && \
   ln -s $USER_HOME/apache-hive-3.1.3-bin $HIVE_HOME && \
   ln -s $USER_HOME/apache-tez-0.9.1-bin $TEZ_HOME && \
-  ln -s $USER_HOME/hbase-2.2.3 $HBASE_HOME && \
-  ln -s $USER_HOME/spark-2.4.7-bin-without-hadoop $SPARK_HOME && \
+  ln -s $USER_HOME/hbase-2.4.6 $HBASE_HOME && \
+  ln -s $USER_HOME/spark-2.4.8-bin-without-hadoop $SPARK_HOME && \
   ln -s $USER_HOME/apache-livy-0.6.0-incubating-bin $LIVY_HOME
 
 # config file

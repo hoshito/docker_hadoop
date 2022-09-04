@@ -1,8 +1,14 @@
 version: "3"
 
+# networksやmain-containerのcontainer_nameはimpaladがthriftの接続をする際に必要
+# (無いと thrift://hadoop_docker_main-container.hadoop_defualt のような接続をしようとして"_"が使用不可文字としてエラーになる)
+networks:
+  default:
+    name: study
 services:
   main-container:
     hostname: main-container
+    container_name: main-container
     build:
       context: ./main-container
       dockerfile: ./Dockerfile
@@ -37,7 +43,7 @@ services:
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
-        $IMPALA_HOME/be/build/latest/service/catalogd -log_dir=/opt/impala/logs -catalog_service_host=catalogd:26000 -state_store_host=statestored
+        $IMPALA_HOME/be/build/latest/service/catalogd -log_dir=/opt/impala/logs -catalog_service_host=catalogd:26000 -state_store_host=statestored --enable_legacy_avx_support
       "
   statestored:
     hostname: statestored
@@ -46,7 +52,7 @@ services:
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
-        $IMPALA_HOME/be/build/latest/service/statestored -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored
+        $IMPALA_HOME/be/build/latest/service/statestored -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored --enable_legacy_avx_support
       "
   impalad:
     hostname: impalad
@@ -55,11 +61,12 @@ services:
     command: >
       bash -c "
         source $IMPALA_HOME/bin/set-classpath.sh
-        $IMPALA_HOME/be/build/latest/service/impalad -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored -catalog_service_host=catalogd -be_port=22000
+        $IMPALA_HOME/be/build/latest/service/impalad -log_dir=/opt/impala/logs -state_store_port=24000 -state_store_host=statestored -catalog_service_host=catalogd -be_port=22000  --enable_legacy_avx_support
       "
     restart: always
   nifi:
     hostname: nifi
+    tty: true
     build:
       context: ./nifi
       dockerfile: ./Dockerfile

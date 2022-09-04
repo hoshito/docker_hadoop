@@ -16,5 +16,3 @@ if [ -z "$(ls $NIFI_HOME)" ]; then
 fi
 
 $NIFI_HOME/bin/nifi.sh start
-
-bash
