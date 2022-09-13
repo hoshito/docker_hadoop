@@ -9,7 +9,7 @@ if [ -z "$(ls $NIFI_HOME)" ]; then
   # nifi.web.https.host
   sed -i "151s/127.0.0.1/$NIFI_HOST/g" nifi.properties
   # nifi.web.proxy.host
-  sed -i "158s/=/$NIFI_WEB_PROXY_HOST/g" nifi.properties
+  sed -i "158s/=/=$NIFI_WEB_PROXY_HOST/g" nifi.properties
   mv nifi.properties $NIFI_HOME/conf/nifi.properties
 
   mv ./hive-site.xml $NIFI_HOME/conf/
